@@ -27,9 +27,11 @@ async def i_am_web(sid):
 async def key_press(sid, data):
     print('Received key_press event from ', sid)
     print('Pressed ', data['key'])
+    # Inform laser clients of a key press event and wait for ack
     response = await sio.call('key_press', data, to='laser_clients')
     if ( response == 'OK' ):
         print('laser ACKED')
+        # Inform web clients that their key press was acked by a laser
         await sio.call('key_press_ack', data, to='web_clients')
 
 @sio.on('*')
