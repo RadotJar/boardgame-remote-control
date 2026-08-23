@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laser Control ( -_•)︻デ═一</title>
+    <!-- 1. Load the Socket.IO client library from a CDN -->
+    <script src="https://cdn.socket.io/4.8.3/socket.io.min.js" integrity="sha384-kzavj5fiMwLKzzD1f8S7TeoVIEi7uKHvbTA3ueZkrzYq75pNQUiUi6Dy98Q3fxb0" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <h1>Laser Control ( -_•)︻デ═一</h1>
+    <p>Status: <span id="status">Disconnected</span></p>
+    
+    <h2>Messages</h2>
+    <p>Press some keys cobba</p>
+    <div id="messages"></div>
+
+    <script>
+        // 2. Initialize the connection
+        const SERVER_URL = "http://localhost:5000"; 
+        const socket = io(SERVER_URL);
+
+        const statusEl = document.getElementById('status');
+        const messagesEl = document.getElementById('messages');
+
+        // 3. Listen for connection success
+        socket.on('connect', () => {
+            statusEl.textContent = `Connected (ID: ${socket.id})`;
+            statusEl.style.color = "green";
+        });
+
+        // 4. Listen for disconnection
+        socket.on('disconnect', () => {
+            statusEl.textContent = "Disconnected";
+            statusEl.style.color = "red";
+        });
+
+        // 5. Send an event to the server when the button is clicked
+        document.addEventListener('keydown', (event) => {
+            const data = { key: event.code };
+            socket.emit('key_press', data);
+            logMessage(`Sent: key_press - ${data.key}`);
+        });
+
+        // 6. Listen for custom events broadcasted by the server
+        socket.on('key_press', (data) => {
+            logMessage(`Received: key_press - ${data.key}`);
+        });
+
+        // Helper function to print logs on the screen
+        function logMessage(text) {
+            const p = document.createElement('p');
+            p.textContent = text;
+            messagesEl.appendChild(p);
+        }
+    </script>
+</body>
+</html>
