@@ -24,10 +24,14 @@
         const statusEl = document.getElementById('status');
         const messagesEl = document.getElementById('messages');
 
+        const keyPresses = []
+        let pressId = 1;
+
         // 3. Listen for connection success
         socket.on('connect', () => {
             statusEl.textContent = `Connected (ID: ${socket.id})`;
             statusEl.style.color = "green";
+            socket.emit('i_am_web')
         });
 
         // 4. Listen for disconnection
@@ -38,21 +42,30 @@
 
         // 5. Send an event to the server when the button is clicked
         document.addEventListener('keydown', (event) => {
-            const data = { key: event.code };
+            const data = { pressId: pressId, key: event.code };
             socket.emit('key_press', data);
-            logMessage(`Sent: key_press - ${data.key}`);
+            logKeyPress(data.key);
+            pressId++;
         });
 
         // 6. Listen for custom events broadcasted by the server
-        socket.on('key_press', (data) => {
-            logMessage(`Received: key_press - ${data.key}`);
+        socket.on('key_press_ack', (data) => {
+            logKeyPressAck(data);
         });
 
         // Helper function to print logs on the screen
-        function logMessage(text) {
+        function logKeyPress(key) {
             const p = document.createElement('p');
-            p.textContent = text;
+            p.textContent = `Sent keypress ${key} ... Awaiting ACK`;
+            keyPresses.push( { pressId, element: p} )
             messagesEl.appendChild(p);
+        }
+
+        function logKeyPressAck(data) {
+            const keyPress = keyPresses.find( keyPress => keyPress.pressId == data.pressId );
+            const keyPressEl = keyPress.element;
+            const existingText = keyPressEl.textContent.split('...')[0]
+            keyPressEl.textContent = existingText + 'ACKED by laser'
         }
     </script>
 </body>
