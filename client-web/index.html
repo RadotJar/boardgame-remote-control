@@ -42,7 +42,7 @@
 
         // 5. Send an event to the server when the button is clicked
         document.addEventListener('keydown', (event) => {
-            const data = { pressId: pressId, key: event.code };
+            const data = { pressId: pressId, key: event.key };
             socket.emit('key_press', data);
             logKeyPress(data.key);
             pressId++;
