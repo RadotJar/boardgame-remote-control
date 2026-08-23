@@ -13,6 +13,13 @@ async def connect( sid, data):
 async def disconnect( sid, reason ):
     print('disconnect ', sid, reason)
 
+@sio.event
+async def key_press(sid, data):
+    print('Received key_press event from ', sid)
+    print('Pressed ', data['key'])
+    print('Forwarding to other clients')
+    await sio.emit('key_press', { 'key': data['key'] })
+
 @sio.on('*')
 async def unhandled(event, sid, data):
     print('Unhandled event: ', event, sid, data)
