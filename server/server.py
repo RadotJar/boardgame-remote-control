@@ -6,8 +6,8 @@ app = socketio.ASGIApp(sio)
 
 @sio.event
 async def connect( sid, data):
-    print('connect ',sid)
-    sio.emit('hello', None, to=sid)
+    print('connect ',sid, data)
+    await sio.emit('hello', None, to=sid)
 
 @sio.event
 async def disconnect( sid, reason ):
