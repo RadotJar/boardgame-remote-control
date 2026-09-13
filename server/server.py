@@ -39,4 +39,4 @@ async def unhandled(event, sid, data):
     print('Unhandled event: ', event, sid, data)
 
 if __name__ == '__main__':
-    uvicorn.run("server:app", port=5000, log_level='info')
+    uvicorn.run("server:app", host="192.168.0.127", port=50002, log_level='info')
