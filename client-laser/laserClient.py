@@ -1,7 +1,11 @@
 import socketio
 import asyncio
+import signal
+
+from Laser import Laser
 
 sio = socketio.AsyncClient()
+laser = Laser()
 
 @sio.event
 async def connect():
@@ -9,7 +13,7 @@ async def connect():
 
 @sio.event
 async def connect_error(data):
-    print('Connectio failed')
+    print('Connection failed')
 
 @sio.event
 async def disconnect(reason):
@@ -27,6 +31,7 @@ async def hello():
 @sio.event
 async def key_press(data):
     print('Received key_press event: ', data)
+    laser.handle_key_press(data['key'])
     return 'OK'
 
 @sio.on('*')
@@ -34,10 +39,17 @@ async def unhandled(event, sid, data):
     print('Unhandled event: ' ,event, sid,data)
 
 async def main():
-    await sio.connect('http://localhost:5000')
+    signal.signal(signal.SIGINT, shutdown_handler)
+
+    await sio.connect('http://192.168.0.127:50002')
     print('My sid is ', sio.sid)
     await sio.emit('i_am_laser')
     await sio.wait()
+
+def shutdown_handler(signum, frame):
+    print('Got CTRL+C')
+    laser.teardown()
+    exit (0)
 
 if __name__ == "__main__":
     asyncio.run(main())
