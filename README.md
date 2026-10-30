@@ -20,7 +20,7 @@ Web page will track any key press and log it with `... awaiting ACK`.
 
 ### Run laser client
 
-`python ./server/laser.py`
+`python ./client-laser/laser.py`
 
 Will run a python socketio client that tries to connect to server at `localhost:5000`. 
 
@@ -35,7 +35,7 @@ For this project to actually be useful, you'll want the laser client and web cli
 Recommended setup:
 
 1. Host the server (`server/server.py`) somewhere
-2. Copy the laser client (`server/laser.py`) to the machine that has the physical laser to it. Ensure it has network access
+2. Copy the laser client (`client-laser/laser.py`) to the machine that has the physical laser to it. Ensure it has network access
 3. Copy the web client (`client-web/index.html`) to the machine you want to connect to the laser from
 4. Edit the hardcoded `localhost:5000` network locations in each script to point to the right places
 5. Run all the scripts!
